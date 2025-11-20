@@ -1,6 +1,9 @@
 from colorama import init, Fore, Style
 from scipy.signal import butter, filtfilt, resample_poly
-import pyaudio
+try:
+    import pyaudiowpatch as pyaudio
+except ImportError:
+    import pyaudio
 import logging
 
 DESIRED_RATE = 16000
@@ -18,6 +21,7 @@ class AudioInput:
             audio_format: int = AUDIO_FORMAT,
             channels: int = CHANNELS,
             resample_to_target: bool = True,
+            use_loopback: bool = False,
         ):
 
         self.input_device_index = input_device_index
@@ -30,6 +34,7 @@ class AudioInput:
         self.audio_format = audio_format
         self.channels = channels
         self.resample_to_target = resample_to_target
+        self.use_loopback = use_loopback
 
     def get_supported_sample_rates(self, device_index):
         """Test which standard sample rates are supported by the specified device."""
@@ -113,11 +118,31 @@ class AudioInput:
         try:
             self.audio_interface = pyaudio.PyAudio()
 
+            if self.use_loopback:
+                # Try to find a loopback device if index not specified
+                if self.input_device_index is None:
+                    try:
+                        default_loopback = self.audio_interface.get_default_wasapi_loopback()
+                        self.input_device_index = default_loopback['index']
+                    except (OSError, AttributeError):
+                         # Fallback: search for a device with "loopback" in name
+                        for i in range(self.audio_interface.get_device_count()):
+                            dev = self.audio_interface.get_device_info_by_index(i)
+                            if "loopback" in dev['name'].lower():
+                                self.input_device_index = i
+                                break
+                
+                if self.input_device_index is None:
+                     print("Warning: No loopback device found. Falling back to default input.")
+
             if self.debug_mode:
                 print(f"Input device index: {self.input_device_index}")
-            actual_device_index = (self.input_device_index if self.input_device_index is not None 
-                                else self.audio_interface.get_default_input_device_info()['index'])
             
+            if self.input_device_index is not None:
+                 actual_device_index = self.input_device_index
+            else:
+                 actual_device_index = self.audio_interface.get_default_input_device_info()['index']
+
             if self.debug_mode:
                 print(f"Actual selected device index: {actual_device_index}")
             self.input_device_index = actual_device_index
@@ -127,14 +152,27 @@ class AudioInput:
                 print(f"Setting up audio on device {self.input_device_index} with sample rate {self.device_sample_rate}")
 
             try:
-                self.stream = self.audio_interface.open(
-                    format=self.audio_format,
-                    channels=self.channels,
-                    rate=self.device_sample_rate,
-                    input=True,
-                    frames_per_buffer=self.chunk_size,
-                    input_device_index=self.input_device_index,
-                )
+                # Prepare open arguments
+                open_kwargs = {
+                    'format': self.audio_format,
+                    'channels': self.channels,
+                    'rate': self.device_sample_rate,
+                    'input': True,
+                    'frames_per_buffer': self.chunk_size,
+                    'input_device_index': self.input_device_index,
+                }
+                
+                # Add loopback flag if requested and supported
+                if self.use_loopback:
+                     # Check if as_loopback is supported (pyaudiowpatch)
+                     import inspect
+                     if 'as_loopback' in inspect.signature(self.audio_interface.open).parameters:
+                         open_kwargs['as_loopback'] = True
+                     elif self.debug_mode:
+                         print("Warning: 'as_loopback' parameter not supported by installed PyAudio library.")
+
+                self.stream = self.audio_interface.open(**open_kwargs)
+                
                 if self.debug_mode:
                     print(f"Audio recording initialized successfully at {self.device_sample_rate} Hz")
                 return True

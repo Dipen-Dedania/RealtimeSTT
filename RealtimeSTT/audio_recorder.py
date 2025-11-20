@@ -335,6 +335,7 @@ class AudioToTextRecorder:
                  faster_whisper_vad_filter: bool = True,
                  normalize_audio: bool = False,
                  start_callback_in_new_thread: bool = False,
+                 use_loopback: bool = False,
                  ):
         """
         Initializes an audio recorder and  transcription
@@ -470,10 +471,6 @@ class AudioToTextRecorder:
             use for wake word detection. Supported options include 'pvporcupine'
             for using the Porcupine wake word engine or 'oww' for using the
             OpenWakeWord engine.
-        - wakeword_backend (str, default="pvporcupine"): Specifies the backend
-            library to use for wake word detection. Supported options include
-            'pvporcupine' for using the Porcupine wake word engine or 'oww' for
-            using the OpenWakeWord engine.
         - openwakeword_model_paths (str, default=None): Comma-separated paths
             to model files for the openwakeword library. These paths point to
             custom models that can be used for wake word detection when the
@@ -571,10 +568,8 @@ class AudioToTextRecorder:
             the callback functions will be executed in a
             new thread. This can help improve performance by allowing the
             callback to run concurrently with other operations.
-
-        Raises:
-            Exception: Errors related to initializing transcription
-            model, wake word detection, or audio recording.
+        - use_loopback (bool, default=False): If set to True, system audio
+            (loopback) is used for input instead of microphone.
         """
 
         self.language = language
@@ -687,6 +682,7 @@ class AudioToTextRecorder:
         self.normalize_audio = normalize_audio
         self.awaiting_speech_end = False
         self.start_callback_in_new_thread = start_callback_in_new_thread
+        self.use_loopback = use_loopback
 
         # ----------------------------------------------------------------------------
         # Named logger configuration
@@ -777,7 +773,8 @@ class AudioToTextRecorder:
                     self.input_device_index,
                     self.shutdown_event,
                     self.interrupt_stop_event,
-                    self.use_microphone
+                    self.use_microphone,
+                    self.use_loopback,
                 )
             )
 
@@ -1036,7 +1033,8 @@ class AudioToTextRecorder:
         input_device_index,
         shutdown_event,
         interrupt_stop_event,
-        use_microphone
+        use_microphone,
+        use_loopback
     ):
         """
         Worker method that handles the audio recording process.
@@ -1056,13 +1054,15 @@ class AudioToTextRecorder:
             shutdown_event (threading.Event): An event that, when set, signals this worker method to terminate.
             interrupt_stop_event (threading.Event): An event to signal keyboard interrupt.
             use_microphone (multiprocessing.Value): A shared value indicating whether to use the microphone.
+            use_loopback (bool): Whether to use loopback for recording.
 
         Raises:
             Exception: If there is an error while initializing the audio recording.
         """
-        import pyaudio
-        import numpy as np
-        from scipy import signal
+        try:
+            import pyaudiowpatch as pyaudio
+        except ImportError:
+            import pyaudio
 
         if __name__ == '__main__':
             system_signal.signal(system_signal.SIGINT, system_signal.SIG_IGN)
@@ -1093,11 +1093,18 @@ class AudioToTextRecorder:
                 try:
                     device_info = audio_interface.get_device_info_by_index(device_index)
                     logger.debug(f"Validating device index {device_index} with info: {device_info}")
-                    if not device_info.get('maxInputChannels', 0) > 0:
-                        logger.debug("Device has no input channels, invalid for recording.")
-                        return False
+                    
+                    # Skip input channel check for loopback devices (they often have maxInputChannels=0)
+                    if not use_loopback:
+                        if not device_info.get('maxInputChannels', 0) > 0:
+                            logger.debug("Device has no input channels, invalid for recording.")
+                            return False
+                    else:
+                        # For loopback devices, just verify the device exists
+                        logger.debug(f"Loopback device {device_index} validated (skipping stream test).")
+                        return True
 
-                    # Try to actually read from the device
+                    # Try to actually read from the device (non-loopback only)
                     test_stream = audio_interface.open(
                         format=pyaudio.paInt16,
                         channels=1,
@@ -1169,11 +1176,22 @@ class AudioToTextRecorder:
                         raise Exception("Selected device validation failed")
 
                     # If we get here, we have a validated device
+                    # Get device info to determine proper channels
+                    device_info = audio_interface.get_device_info_by_index(input_device_index)
+                    
+                    # Loopback devices typically need 2 channels (stereo)
+                    channels_to_use = 2 if use_loopback else 1
+                    
+                    # Use device's default sample rate for loopback
+                    if use_loopback:
+                        sample_rate = int(device_info.get('defaultSampleRate', 48000))
+                        logger.debug(f"Using loopback device's sample rate: {sample_rate}")
+                    
                     logger.debug(f"Opening stream with device index {input_device_index}, "
-                                f"sample_rate={sample_rate}, chunk_size={chunk_size}")
+                                f"sample_rate={sample_rate}, chunk_size={chunk_size}, channels={channels_to_use}")
                     stream = audio_interface.open(
                         format=pyaudio.paInt16,
-                        channels=1,
+                        channels=channels_to_use,
                         rate=sample_rate,
                         input=True,
                         frames_per_buffer=chunk_size,
@@ -1181,7 +1199,7 @@ class AudioToTextRecorder:
                     )
 
                     logger.info(f"Microphone connected and validated (device index: {input_device_index}, "
-                                f"sample rate: {sample_rate}, chunk size: {chunk_size})")
+                                f"sample rate: {sample_rate}, chunk size: {chunk_size}, channels: {channels_to_use})")
                     return stream
 
                 except Exception as e:
@@ -1228,6 +1246,27 @@ class AudioToTextRecorder:
                 if audio_interface is None:
                     logger.debug("Creating PyAudio interface...")
                     audio_interface = pyaudio.PyAudio()
+
+                # Handle loopback device selection
+                if use_loopback:
+                    if input_device_index is None:
+                        try:
+                            # Try to get default WASAPI loopback device
+                            default_loopback = audio_interface.get_default_wasapi_loopback()
+                            input_device_index = default_loopback['index']
+                            logger.debug(f"Using default WASAPI loopback device: {input_device_index}")
+                        except (OSError, AttributeError):
+                            # Fallback: search for a device with "loopback" in name
+                            logger.debug("get_default_wasapi_loopback not available, searching for loopback device...")
+                            for i in range(audio_interface.get_device_count()):
+                                dev = audio_interface.get_device_info_by_index(i)
+                                if "loopback" in dev['name'].lower():
+                                    input_device_index = i
+                                    logger.debug(f"Found loopback device: {dev['name']} (index {i})")
+                                    break
+                            
+                            if input_device_index is None:
+                                logger.warning("Warning: No loopback device found. Falling back to default input.")
 
                 if input_device_index is None:
                     try:

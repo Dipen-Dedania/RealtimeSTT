@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python tests/dipen.py:*)",
+      "Bash(python:*)",
+      "Bash(pyinstaller:*)",
+      "Bash(node test_transcriber_exe.js:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
