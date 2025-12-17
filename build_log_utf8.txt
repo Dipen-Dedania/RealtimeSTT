@@ -1,0 +1,299 @@
+﻿python : 243 WARNING: collect_dynamic_libs - 
+skipping library collection for module 
+'pyaudio' as it is not a package.
+At line:1 char:1
++ python build_electron.py 2>&1 | Out-File 
+-Encoding utf8 build_log_utf ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified:  
+   (243 WARNING: co... not a package.:Strin  
+  g) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandE 
+   rror
+ 
+2025-11-27 11:55:25.607611: I 
+tensorflow/core/util/port.cc:153] oneDNN 
+custom operations are on. You may see 
+slightly different numerical results due to 
+floating-point round-off errors from 
+different computation orders. To turn them 
+off, set the environment variable 
+`TF_ENABLE_ONEDNN_OPTS=0`.
+2025-11-27 11:55:26.177919: I 
+tensorflow/core/util/port.cc:153] oneDNN 
+custom operations are on. You may see 
+slightly different numerical results due to 
+floating-point round-off errors from 
+different computation orders. To turn them 
+off, set the environment variable 
+`TF_ENABLE_ONEDNN_OPTS=0`.
+5270 WARNING: Failed to collect submodules 
+for 'torch.testing._internal.opinfo' because 
+importing 'torch.testing._internal.opinfo' 
+raised: ModuleNotFoundError: No module named 
+'expecttest'
+C:\Python312\Lib\site-packages\PyInstaller\ut
+ils\hooks\__init__.py:665: 
+DeprecationWarning: `TorchScript` support 
+for functional optimizers is deprecated and 
+will be removed in a future PyTorch release. 
+Consider using the `torch.compile` optimizer 
+instead.
+  __import__(name)
+W1127 11:55:29.639000 42028 site-packages\tor
+ch\distributed\elastic\multiprocessing\redire
+cts.py:29] NOTE: Redirects are currently not 
+supported in Windows or MacOs.
+C:\Python312\Lib\site-packages\PyInstaller\ut
+ils\hooks\__init__.py:665: 
+DeprecationWarning: 
+`torch.distributed._sharding_spec` will be 
+deprecated, use 
+`torch.distributed._shard.sharding_spec` 
+instead
+  __import__(name)
+C:\Python312\Lib\site-packages\PyInstaller\ut
+ils\hooks\__init__.py:665: 
+DeprecationWarning: 
+`torch.distributed._sharded_tensor` will be 
+deprecated, use 
+`torch.distributed._shard.sharded_tensor` 
+instead
+  __import__(name)
+C:\Python312\Lib\site-packages\PyInstaller\ut
+ils\hooks\__init__.py:665: 
+DeprecationWarning: 
+`torch.distributed._shard.checkpoint` will 
+be deprecated, use 
+`torch.distributed.checkpoint` instead
+  __import__(name)
+2025-11-27 11:55:50.432946: I 
+tensorflow/core/util/port.cc:153] oneDNN 
+custom operations are on. You may see 
+slightly different numerical results due to 
+floating-point round-off errors from 
+different computation orders. To turn them 
+off, set the environment variable 
+`TF_ENABLE_ONEDNN_OPTS=0`.
+2025-11-27 11:55:51.022403: I 
+tensorflow/core/util/port.cc:153] oneDNN 
+custom operations are on. You may see 
+slightly different numerical results due to 
+floating-point round-off errors from 
+different computation orders. To turn them 
+off, set the environment variable 
+`TF_ENABLE_ONEDNN_OPTS=0`.
+5471 WARNING: Failed to collect submodules 
+for 'torch.testing._internal.opinfo' because 
+importing 'torch.testing._internal.opinfo' 
+raised: ModuleNotFoundError: No module named 
+'expecttest'
+C:\Python312\Lib\site-packages\PyInstaller\ut
+ils\hooks\__init__.py:665: 
+DeprecationWarning: `TorchScript` support 
+for functional optimizers is deprecated and 
+will be removed in a future PyTorch release. 
+Consider using the `torch.compile` optimizer 
+instead.
+  __import__(name)
+W1127 11:55:54.917000 60684 site-packages\tor
+ch\distributed\elastic\multiprocessing\redire
+cts.py:29] NOTE: Redirects are currently not 
+supported in Windows or MacOs.
+C:\Python312\Lib\site-packages\PyInstaller\ut
+ils\hooks\__init__.py:665: 
+DeprecationWarning: 
+`torch.distributed._sharding_spec` will be 
+deprecated, use 
+`torch.distributed._shard.sharding_spec` 
+instead
+  __import__(name)
+C:\Python312\Lib\site-packages\PyInstaller\ut
+ils\hooks\__init__.py:665: 
+DeprecationWarning: 
+`torch.distributed._sharded_tensor` will be 
+deprecated, use 
+`torch.distributed._shard.sharded_tensor` 
+instead
+  __import__(name)
+C:\Python312\Lib\site-packages\PyInstaller\ut
+ils\hooks\__init__.py:665: 
+DeprecationWarning: 
+`torch.distributed._shard.checkpoint` will 
+be deprecated, use 
+`torch.distributed.checkpoint` instead
+  __import__(name)
+C:\Python312\Lib\site-packages\pydantic\exper
+imental\__init__.py:7: 
+PydanticExperimentalWarning: This module is 
+experimental, its contents are subject to 
+change and deprecation.
+  warnings.warn(
+Traceback (most recent call last):
+  File "C:\Python312\Lib\importlib\metadata\_
+_init__.py", line 397, in from_name
+    return next(cls.discover(name=name))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+StopIteration
+
+During handling of the above exception, 
+another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python312\Lib\site-packages\PyInst
+aller\depend\imphook.py", line 422, in 
+_load_hook_module
+    self._hook_module = 
+importlib_load_source(self.hook_module_name, 
+self.hook_filename)
+                        ^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python312\Lib\site-packages\PyInst
+aller\compat.py", line 559, in 
+importlib_load_source
+    mod_loader.exec_module(mod)
+  File "<frozen 
+importlib._bootstrap_external>", line 994, 
+in exec_module
+  File "<frozen importlib._bootstrap>", line 
+488, in _call_with_frames_removed
+  File "C:\Python312\Lib\site-packages\_pyins
+taller_hooks_contrib\stdhooks\hook-webrtcvad.
+py", line 15, in <module>
+    datas = copy_metadata('webrtcvad')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python312\Lib\site-packages\PyInst
+aller\utils\hooks\__init__.py", line 969, in 
+copy_metadata
+    dist = 
+importlib_metadata.distribution(package_name)
+           
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python312\Lib\importlib\metadata\_
+_init__.py", line 861, in distribution
+    return 
+Distribution.from_name(distribution_name)
+           
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python312\Lib\importlib\metadata\_
+_init__.py", line 399, in from_name
+    raise PackageNotFoundError(name)
+importlib.metadata.PackageNotFoundError: No 
+package metadata was found for webrtcvad
+
+During handling of the above exception, 
+another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\DDrive\Github\RealtimeSTT\build_el
+ectron.py", line 12, in <module>
+    PyInstaller.__main__.run([
+  File "C:\Python312\Lib\site-packages\PyInst
+aller\__main__.py", line 215, in run
+    run_build(pyi_config, spec_file, 
+**vars(args))
+  File "C:\Python312\Lib\site-packages\PyInst
+aller\__main__.py", line 70, in run_build
+    PyInstaller.building.build_main.main(pyi_
+config, spec_file, **kwargs)
+  File "C:\Python312\Lib\site-packages\PyInst
+aller\building\build_main.py", line 1272, in 
+main
+    build(specfile, distpath, workpath, 
+clean_build)
+  File "C:\Python312\Lib\site-packages\PyInst
+aller\building\build_main.py", line 1210, in 
+build
+    exec(code, spec_namespace)
+  File "E:\DDrive\Github\RealtimeSTT\transcri
+ber.spec", line 17, in <module>
+    a = Analysis(
+        ^^^^^^^^^
+  File "C:\Python312\Lib\site-packages\PyInst
+aller\building\build_main.py", line 584, in 
+__init__
+    self.__postinit__()
+  File "C:\Python312\Lib\site-packages\PyInst
+aller\building\datastruct.py", line 184, in 
+__postinit__
+    self.assemble()
+  File "C:\Python312\Lib\site-packages\PyInst
+aller\building\build_main.py", line 719, in 
+assemble
+    self.graph.add_hiddenimports(self.hiddeni
+mports)
+  File "C:\Python312\Lib\site-packages\PyInst
+aller\depend\analysis.py", line 770, in 
+add_hiddenimports
+    nodes = self.import_hook(modnm)
+            ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python312\Lib\site-packages\PyInst
+aller\lib\modulegraph\modulegraph.py", line 
+1258, in import_hook
+    target_package, target_module_partname = 
+self._find_head_package(
+                                             
+^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python312\Lib\site-packages\PyInst
+aller\lib\modulegraph\modulegraph.py", line 
+1437, in _find_head_package
+    target_package = 
+self._safe_import_module(
+                     
+^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python312\Lib\site-packages\PyInst
+aller\depend\analysis.py", line 539, in 
+_safe_import_module
+    return 
+super()._safe_import_module(module_basename, 
+module_name, parent_package)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python312\Lib\site-packages\PyInst
+aller\lib\modulegraph\modulegraph.py", line 
+1818, in _safe_import_module
+    self._process_imports(n)
+  File "C:\Python312\Lib\site-packages\PyInst
+aller\lib\modulegraph\modulegraph.py", line 
+2646, in _process_imports
+    target_modules = 
+self._safe_import_hook(*import_info, 
+**kwargs)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python312\Lib\site-packages\PyInst
+aller\depend\analysis.py", line 385, in 
+_safe_import_hook
+    excluded_imports = self._find_all_exclude
+d_imports(source_module.identifier)
+                       ^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python312\Lib\site-packages\PyInst
+aller\depend\analysis.py", line 373, in 
+_find_all_excluded_imports
+    excluded_imports.update(module_hook.exclu
+dedimports)
+                            
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python312\Lib\site-packages\PyInst
+aller\depend\imphook.py", line 343, in 
+__getattr__
+    self._load_hook_module()
+  File "C:\Python312\Lib\site-packages\PyInst
+aller\depend\imphook.py", line 425, in 
+_load_hook_module
+    raise ImportErrorWhenRunningHook(self.hoo
+k_module_name, self.hook_filename)
+PyInstaller.exceptions.ImportErrorWhenRunning
+Hook: ERROR: Failed to import module 
+__PyInstaller_hooks_0_webrtcvad required by 
+hook for module C:\Python312\Lib\site-package
+s\_pyinstaller_hooks_contrib\stdhooks\hook-we
+brtcvad.py. Please check whether module 
+__PyInstaller_hooks_0_webrtcvad actually 
+exists and whether the hook is compatible 
+with your version of C:\Python312\Lib\site-pa
+ckages\_pyinstaller_hooks_contrib\stdhooks\ho
+ok-webrtcvad.py: You might want to read more 
+about hooks in the manual and provide a 
+pull-request to improve PyInstaller.

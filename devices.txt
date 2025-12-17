@@ -1,0 +1,57 @@
+Host APIs:
+  0: MME
+  1: Windows DirectSound
+  2: Windows WASAPI
+  3: Windows WDM-KS
+
+WASAPI Devices (Host API Index 2):
+  Device 24: Headphones (High Definition Audio Device)
+    Max Input Channels: 0
+    Max Output Channels: 2
+    Default Sample Rate: 48000.0
+------------------------------
+  Device 25: Speakers (Steam Streaming Microphone)
+    Max Input Channels: 0
+    Max Output Channels: 2
+    Default Sample Rate: 48000.0
+------------------------------
+  Device 26: CABLE In 16ch (VB-Audio Virtual Cable)
+    Max Input Channels: 0
+    Max Output Channels: 2
+    Default Sample Rate: 48000.0
+------------------------------
+  Device 27: DELL U2415 (NVIDIA High Definition Audio)
+    Max Input Channels: 0
+    Max Output Channels: 2
+    Default Sample Rate: 48000.0
+------------------------------
+  Device 28: CABLE Input (VB-Audio Virtual Cable)
+    Max Input Channels: 0
+    Max Output Channels: 2
+    Default Sample Rate: 48000.0
+------------------------------
+  Device 29: Speakers (Steam Streaming Speakers)
+    Max Input Channels: 0
+    Max Output Channels: 2
+    Default Sample Rate: 48000.0
+------------------------------
+  Device 30: LG HDR 4K (NVIDIA High Definition Audio)
+    Max Input Channels: 0
+    Max Output Channels: 2
+    Default Sample Rate: 48000.0
+------------------------------
+  Device 31: Microphone (USB Audio)
+    Max Input Channels: 1
+    Max Output Channels: 0
+    Default Sample Rate: 16000.0
+------------------------------
+  Device 32: CABLE Output (VB-Audio Virtual Cable)
+    Max Input Channels: 2
+    Max Output Channels: 0
+    Default Sample Rate: 48000.0
+------------------------------
+  Device 33: Microphone (Steam Streaming Microphone)
+    Max Input Channels: 1
+    Max Output Channels: 0
+    Default Sample Rate: 44100.0
+------------------------------

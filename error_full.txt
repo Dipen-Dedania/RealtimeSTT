@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "electron_transcriber.py", line 13, in <module>
+    from RealtimeSTT.audio_recorder import AudioToTextRecorder
+  File "C:\Users\ZTITEC~1\AppData\Local\Temp\_MEI640322\RealtimeSTT\__init__.py", line 2, in <module>
+    from .audio_recorder_client import AudioToTextRecorderClient
+  File "C:\Users\ZTITEC~1\AppData\Local\Temp\_MEI640322\RealtimeSTT\audio_recorder_client.py", line 7, in <module>
+    from websocket import WebSocketApp
+ModuleNotFoundError: No module named 'websocket'
+[PYI-17496:ERROR] Failed to execute script 'electron_transcriber' due to unhandled exception!

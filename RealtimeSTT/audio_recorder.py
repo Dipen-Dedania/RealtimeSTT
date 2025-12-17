@@ -1086,7 +1086,7 @@ class AudioToTextRecorder:
                 return 48000  # Fallback to a common high sample rate
 
         def initialize_audio_stream(audio_interface, sample_rate, chunk_size):
-            nonlocal input_device_index
+            nonlocal input_device_index, device_sample_rate, num_channels
 
             def validate_device(device_index):
                 """Validate that the device exists and is actually available for input."""
@@ -1169,6 +1169,19 @@ class AudioToTextRecorder:
                         raise Exception("Selected device validation failed")
 
                     # If we get here, we have a validated device
+                    # Get device info to determine proper channels
+                    device_info = audio_interface.get_device_info_by_index(input_device_index)
+                    
+                    # Loopback devices typically need 2 channels (stereo)
+                    channels_to_use = 2 if use_loopback else 1
+                    num_channels = channels_to_use  # Update outer variable for preprocessing
+                    
+                    # Use device's default sample rate for loopback
+                    if use_loopback:
+                        sample_rate = int(device_info.get('defaultSampleRate', 48000))
+                        device_sample_rate = sample_rate  # Update outer variable for preprocessing
+                        logger.debug(f"Using loopback device's sample rate: {sample_rate}")
+                    
                     logger.debug(f"Opening stream with device index {input_device_index}, "
                                 f"sample_rate={sample_rate}, chunk_size={chunk_size}")
                     stream = audio_interface.open(
@@ -1190,8 +1203,15 @@ class AudioToTextRecorder:
                     time.sleep(3)  # Wait before retrying
                     continue
 
-        def preprocess_audio(chunk, original_sample_rate, target_sample_rate):
-            """Preprocess audio chunk similar to feed_audio method."""
+        def preprocess_audio(chunk, original_sample_rate, target_sample_rate, num_channels=1):
+            """Preprocess audio chunk similar to feed_audio method.
+            
+            Args:
+                chunk: Audio data (bytes or numpy array)
+                original_sample_rate: Sample rate of input audio
+                target_sample_rate: Target sample rate (usually 16000 for Whisper)
+                num_channels: Number of audio channels (1=mono, 2=stereo)
+            """
             if isinstance(chunk, np.ndarray):
                 # Handle stereo to mono conversion if necessary
                 if chunk.ndim == 2:
@@ -1207,6 +1227,12 @@ class AudioToTextRecorder:
             else:
                 # If chunk is bytes, convert to numpy array
                 chunk = np.frombuffer(chunk, dtype=np.int16)
+                
+                # Handle stereo to mono conversion for byte data
+                # Stereo audio is interleaved: [L0, R0, L1, R1, ...]
+                if num_channels == 2:
+                    # Reshape to (N, 2) then average channels to get mono
+                    chunk = chunk.reshape(-1, 2).mean(axis=1).astype(np.int16)
 
                 # Resample if necessary
                 if original_sample_rate != target_sample_rate:
@@ -1220,6 +1246,7 @@ class AudioToTextRecorder:
         audio_interface = None
         stream = None
         device_sample_rate = None
+        num_channels = 2 if use_loopback else 1  # Track channel count for preprocessing
         chunk_size = 1024  # Increased chunk size for better performance
 
         def setup_audio():  
@@ -1290,7 +1317,7 @@ class AudioToTextRecorder:
                     data = stream.read(chunk_size, exception_on_overflow=False)
 
                     if use_microphone.value:
-                        processed_data = preprocess_audio(data, device_sample_rate, target_sample_rate)
+                        processed_data = preprocess_audio(data, device_sample_rate, target_sample_rate, num_channels)
                         buffer += processed_data
 
                         # Check if the buffer has reached or exceeded the silero_buffer_size
